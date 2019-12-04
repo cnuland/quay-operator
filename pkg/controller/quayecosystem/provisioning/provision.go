@@ -66,6 +66,8 @@ func (r *ReconcileQuayEcosystemConfiguration) CoreQuayResourceDeployment(metaObj
 		return nil, err
 	}
 
+	fmt.Printf("DETAILS OF METAOBJECT %+v \n", metaObject)
+
 	if err := r.configureAnyUIDSCCs(metaObject); err != nil {
 		logging.Log.Error(err, "Failed to configure SCCs")
 		return nil, err

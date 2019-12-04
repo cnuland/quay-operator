@@ -1,0 +1,36 @@
+kube-proxy
+total 96K
+drwxr-xr-x.   1 root root 4.0K Dec  3 16:28 .
+drwxr-xr-x.   1 root root 4.0K Dec  3 16:28 ..
+-rwxr-xr-x.   1 root root    0 Dec  3 16:28 .dockerenv
+-rw-r--r--.   1 root root  12K Aug  1 01:10 anaconda-post.log
+lrwxrwxrwx.   1 root root    7 Aug  1 01:09 bin -> usr/bin
+drwxr-xr-x.  16 root root 4.1K Dec  3 16:28 dev
+drwxr-xr-x.   1 root root 4.0K Dec  3 16:28 etc
+drwxr-xr-x.   2 root root 4.0K Apr 11  2018 home
+-rwxr-xr-x.   1 root root  857 Jan  1  1970 install.sh
+-rw-r--r--.   1 root root 1.8K Jan  1  1970 install.yaml
+-rw-r--r--.   1 root root 5.6K Jan  1  1970 kubeconfig.kubeconfig
+lrwxrwxrwx.   1 root root    7 Aug  1 01:09 lib -> usr/lib
+lrwxrwxrwx.   1 root root    9 Aug  1 01:09 lib64 -> usr/lib64
+drwxr-xr-x.   2 root root 4.0K Apr 11  2018 media
+drwxr-xr-x.   2 root root 4.0K Apr 11  2018 mnt
+-rw-r--r--.   1 root root   10 Jan  1  1970 namespace-file
+-rw-r--r--.   1 root root  159 Jan  1  1970 namespace.yaml
+drwxr-xr-x.   2 root root 4.0K Apr 11  2018 opt
+-rw-r--r--.   1 root root  890 Jan  1  1970 param-file.txt
+-rw-r--r--.   1 root root    0 Jan  1  1970 privileged-sa-list.txt
+dr-xr-xr-x. 325 root root    0 Nov 25 18:48 proc
+-rw-r--r--.   1 root root    0 Jan  1  1970 rbac.yaml
+dr-xr-x---.   1 root root 4.0K Sep  6 18:41 root
+drwxr-xr-x.   1 root root 4.0K Sep  6 19:00 run
+lrwxrwxrwx.   1 root root    8 Aug  1 01:09 sbin -> usr/sbin
+drwxr-xr-x.   2 root root 4.0K Apr 11  2018 srv
+dr-xr-xr-x.  13 root root    0 Nov 25 18:48 sys
+drwxrwxrwt.   1 root root 4.0K Sep  6 19:00 tmp
+drwxr-xr-x.   1 root root 4.0K Aug  1 01:09 usr
+drwxr-xr-x.   1 root root 4.0K Aug  1 01:09 var
+namespace/kube-proxy created
+serviceaccount/kube-proxy created
+clusterrolebinding.rbac.authorization.k8s.io/system:kube-proxy created
+daemonset.extensions/kube-proxy created
