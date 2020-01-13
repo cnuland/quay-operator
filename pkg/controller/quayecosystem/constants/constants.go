@@ -14,13 +14,13 @@ const (
 	// OperatorName is a operator name
 	OperatorName = "quay-operator"
 	// QuayImage is the Quay image
-	QuayImage = "quay.io/redhat/quay:v3.1.3"
+	QuayImage = "quay.io/redhat/quay:v3.2.0"
 	// ImagePullSecret is the name of the image pull secret for retrieving images from a protected image registry
 	ImagePullSecret = "redhat-pull-secret"
 	// RedisImage is the name of the Redis Image
 	RedisImage = "registry.access.redhat.com/rhscl/redis-32-rhel7:latest"
 	// ClairImage is the Clair image
-	ClairImage = "quay.io/redhat/clair-jwt:v3.1.3"
+	ClairImage = "quay.io/redhat/clair-jwt:v3.2.0"
 	// LabelAppKey is the name of the label key
 	LabelAppKey = "app"
 	// LabelAppValue is the name of the label
@@ -31,6 +31,8 @@ const (
 	LabelComponentAppValue = "app"
 	// LabelComponentConfigValue is the name of the config label
 	LabelComponentConfigValue = "config"
+	// LabelComponentRepoMirrorValue is the name of the repomirror label
+	LabelComponentRepoMirrorValue = "mirror-app"
 	// LabelComponentClairValue is the name of the config label
 	LabelComponentClairValue = "clair"
 	// LabelComponentRedisValue is the name of the Redis label
@@ -112,6 +114,8 @@ const (
 	QuayEntryName = "QUAYENTRY"
 	// QuayEntryConfigValue represents the value that will start the Quay config container
 	QuayEntryConfigValue = "config"
+	// QuayEntryRepoMirrorValue represents the value that will start the Quay repomirror container
+	QuayEntryRepoMirrorValue = "repomirror"
 	// QuayConfigUsername represents the username of the Quay config container
 	QuayConfigUsername = "quayconfig"
 	// QuayConfigPasswordName represents the name of the environment variable contining the Quay configuration password
@@ -124,6 +128,8 @@ const (
 	QuayConfigDefaultPasswordValue = "quay"
 	// QuayContainerConfigName represents the name of the Quay config container
 	QuayContainerConfigName = "quay-enterprise-config"
+	// QuayContainerRepoMirrorName represents the name of the Quay repo mirror container
+	QuayContainerRepoMirrorName = "quay-enterprise-mirror-app"
 	// QuayContainerAppName represents the name of the Quay app container
 	QuayContainerAppName = "quay-enterprise-app"
 	// QuayContainerCertSecret is the name of the secret for extra Quay certificates
@@ -172,49 +178,49 @@ const (
 	RegistryStorageTypeCloudfrontS3StorageName = "CloudFrontedS3Storage"
 
 	// S3AccessKey is the name of the S3 Access Key
-	S3AccessKey = "s3_access_key"
+	S3AccessKey = "accessKey"
 
 	// S3SecretKey is the name of the S3 Secret Key
-	S3SecretKey = "s3_secret_key"
+	S3SecretKey = "secretKey"
 
 	// AzureAccountName is the name of the Azure Account Name
-	AzureAccountName = "azure_account_name"
+	AzureAccountName = "accountName"
 
 	// AzureAccountKey is the name of the Azure Secret Key
-	AzureAccountKey = "azure_account_key"
+	AzureAccountKey = "accountKey"
 
 	// AzureSasToken is the name of the Azure SAS Token
-	AzureSasToken = "sas_token"
+	AzureSasToken = "sasToken"
 
 	// GoogleCloudAccessKey is the name of the Google Cloud access key
-	GoogleCloudAccessKey = "access_key"
+	GoogleCloudAccessKey = "accessKey"
 
 	// GoogleCloudSecretKey is the name of the Google Cloud secret Key
-	GoogleCloudSecretKey = "secret_key"
+	GoogleCloudSecretKey = "secretKey"
 
 	// RHOCSAccessKey is the name of the RHOCS access key
-	RHOCSAccessKey = "access_key"
+	RHOCSAccessKey = "accessKey"
 
 	// RHOCSSecretKey is the name of the RHOCS secret Key
-	RHOCSSecretKey = "secret_key"
+	RHOCSSecretKey = "secretKey"
 
 	// RADOSAccessKey is the name of the RADOS access key
-	RADOSAccessKey = "access_key"
+	RADOSAccessKey = "accessKey"
 
 	// RADOSSecretKey is the name of the RADOS secret Key
-	RADOSSecretKey = "secret_key"
+	RADOSSecretKey = "secretKey"
 
 	// SwiftUser is the name of the Swift user Key
-	SwiftUser = "swift_user"
+	SwiftUser = "user"
 
 	// SwiftPassword is the name of the Swift password Key
-	SwiftPassword = "swift_password"
+	SwiftPassword = "password"
 
 	// CloudfrontS3AccessKey is the name of the S3 Access Key
-	CloudfrontS3AccessKey = "s3_access_key"
+	CloudfrontS3AccessKey = "accessKey"
 
 	// CloudfrontS3SecretKey is the name of the S3 Secret Key
-	CloudfrontS3SecretKey = "s3_secret_key"
+	CloudfrontS3SecretKey = "secretKey"
 
 	// QuayAppConfigSSLCertificateSecretKey is key in the app-config secret representing the SSL Certificate
 	QuayAppConfigSSLCertificateSecretKey = "ssl.cert"

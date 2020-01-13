@@ -212,6 +212,27 @@ Quay supports multiple storage backends (configured as an array). The quay opera
 
 Please refer to the [Registry Storage Documentation](docs/storage.md) for the options available.
 
+### Repository Mirroring
+
+Quay provides the capability to create container image repositories that exactly match the content of external registries. This functionality can be enabled by setting the `enableRepoMirroring: true` as shown below:
+
+```
+apiVersion: redhatcop.redhat.io/v1alpha1
+kind: QuayEcosystem
+metadata:
+  name: example-quayecosystem
+spec:
+  quay:
+    imagePullSecretName: redhat-pull-secret
+    enableRepoMirroring: true
+```
+
+The following additional options are also available:
+
+* `repoMirrorTLSVerify` - Require HTTPS and verify certificates of Quay registry during mirror
+* `repoMirrorServerHostname` - URL for use by the skopeo copy command
+* `repoMirrorEnvVars` - Environment variables to be applied to the repository mirror container
+* `repoMirrorResources` - Compute resources to be applied to the repository mirror container
 
 ### Configuration Files
 
@@ -326,7 +347,7 @@ spec:
 
 ### Specifying the Quay Route
 
-Quay makes use of an OpenShift route to enable ingress. The hostname for this route is automatically generated as per the configuration of the OpenShift cluster. Alternatively, the hostname for this route can be explicitly specified using the `routeHost` property under the _quay_ field as shown below:
+Quay makes use of an OpenShift route to enable ingress. The hostname for this route is automatically generated as per the configuration of the OpenShift cluster. Alternatively, the hostname for this route can be explicitly specified using the `hostname` property under the _quay_ field as shown below:
 
 ```
 apiVersion: redhatcop.redhat.io/v1alpha1
@@ -335,8 +356,50 @@ metadata:
   name: example-quayecosystem
 spec:
   quay:
-    routeHost: example-quayecosystem-quay-quay-enterprise.apps.openshift.example.com
+    hostname: example-quayecosystem-quay-quay-enterprise.apps.openshift.example.com
     imagePullSecretName: redhat-pull-secret
+```
+
+### Methods for Exteral Access
+
+Support is available to access Quay through a number of OpenShift and Kubernetes mechanisms for ingress. When running on OpenShift, a [Route](https://docs.openshift.com/container-platform/4.2/networking/routes/route-configuration.html) is used while a [LoadBalancer Service](https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer) is used. 
+
+The type of external access can be specified by setting the `externalAccessType` using one of the available options in the table below:
+
+| External Access Type | Description |  Notes |
+| --------- | ---------- | ---------- |
+| `Route` | [OpenShift Route](https://docs.openshift.com/container-platform/latest/networking/routes/route-configuration.html) | Can only be specified when running in OpenShift |
+| `LoadBalancer` | [LoadBalancer Service](https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer) | |
+| `NodePort` | [NodePort Service](https://kubernetes.io/docs/concepts/services-networking/service/#nodeport) | A dns based hostname or IP address **must** be specified using the `hostname` property of the `quay` resource |
+
+An example of how to specify the `externalAccessType` is shown below
+
+```
+apiVersion: redhatcop.redhat.io/v1alpha1
+kind: QuayEcosystem
+metadata:
+  name: example-quayecosystem
+spec:
+  quay:
+    imagePullSecretName: redhat-pull-secret
+    externalAccessType: LoadBalancer
+```
+
+#### NodePorts
+
+By default, `NodePort` type Services are allocated a randomly assigned network port between 30000-32767. To support a predictive allocation of resources, the `NodePort` services for Quay and Quay Config can be define using the `nodePort` and `configNodePort` as shown below:
+
+```
+apiVersion: redhatcop.redhat.io/v1alpha1
+kind: QuayEcosystem
+metadata:
+  name: example-quayecosystem
+spec:
+  quay:
+    imagePullSecretName: redhat-pull-secret
+    externalAccessType: NodePort
+    nodePort: 30100
+    configNodePort: 30101
 ```
 
 
@@ -344,7 +407,7 @@ spec:
 
 During the development process, you may want to test the provisioning and setup of Quay Enterprise server. By default, the operator will use the internal service to communicate with the configuration pod. However, when running external to the cluster, you will need to specify the ingress location for which the setup process can use.
 
-Specify the `configRoute` as shown below:
+Specify the `configHostname` as shown below:
 
 ```
 apiVersion: redhatcop.redhat.io/v1alpha1
@@ -353,7 +416,7 @@ metadata:
   name: example-quayecosystem
 spec:
   quay:
-    configRouteHost: example-quayecosystem-quay-config-quay-enterprise.apps.openshift.example.com
+    configHostname: example-quayecosystem-quay-config-quay-enterprise.apps.openshift.example.com
     imagePullSecretName: redhat-pull-secret
 ```
 
@@ -446,6 +509,22 @@ Each of the following components expose a set of similar properties that can be 
 
 As referenced in prior sections, an Image Pull Secret can specify the name of the secret containing credentials to an image from a protected registry using the property `imagePullSecret`.
 
+### Image
+
+There may be a desire to make use of an alternate image or source location for each of the components in the Quay ecosystem. The most common use case is to to make use of an image registry that contains all of the needed images instead of being sourced from the public internet. Each component has a property called `image` where the location of the related image can be referenced from.
+
+The following is an example of how a customized image location can be specified:
+
+```
+apiVersion: redhatcop.redhat.io/v1alpha1
+kind: QuayEcosystem
+metadata:
+  name: example-quayecosystem
+spec:
+  quay:
+    image: myregistry.example.com/quay/quay:v3.2.0
+```
+
 ### Compute Resources
 
 [Compute Resources](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/#resource-requests-and-limits-of-pod-and-container) such as memory and CPU can be specified in the same form as any other value in a `PodTemplate`. CPU and Memory values for _Requests_ and _Limits_ can be specified under a property called `resources`.
@@ -510,7 +589,7 @@ spec:
   quay:
     imagePullSecretName: redhat-pull-secret
     nodeSelector:
-      node-role.kubernetes.io/infra=true
+      node-role.kubernetes.io/infra: true
 ```
 
 ### Deployment Strategy

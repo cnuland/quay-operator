@@ -28,7 +28,7 @@ In many cases, access to storage requires the use of sensitive values. Each back
 Instead of declaring the registry backend properties within the specific backend, the values can be added to a secret as shown below:
 
 ```
-oc create secret generic s3-credentials --from-literal=s3_access_key=<s3_access_key> --from-literal=s3_secret_key=<s3_secret_key>
+oc create secret generic s3-credentials --from-literal=accessKey=<accessKey> --from-literal=secretKey=<secretKey>
 ```
 
 With the values now present in the secret, the properties explicitly declared in the backend can be removed.
@@ -51,14 +51,14 @@ spec:
     registryBackends:
       - name: azure-ussouthcentral
         credentialsSecretName: azure-ussouthcentral-registry
+        replicateByDefault: true
         azure:
           azure_container: quay
-          replicateByDefault: true
       - name: azure-seasia
         credentialsSecretName: azure-seasia-registry
+        replicateByDefault: true
         azure:
           azure_container: quay
-          replicateByDefault: true
 ```
 
 _Note:_ Support for replicated storage is not available for the `local` registry backend and will result in an error during the verification phase.
@@ -105,7 +105,7 @@ spec:
   quay:
     imagePullSecretName: redhat-pull-secret
     registryStorage:
-      persistentVolumeAccessMode:
+      persistentVolumeAccessModes:
         - ReadWriteOnce
       persistentVolumeSize: 10Gi
 ```

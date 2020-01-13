@@ -96,6 +96,12 @@ func (qm *QuaySetupManager) SetupQuay(quaySetupInstance *QuaySetupInstance) erro
 	quayConfig.Config["BUILDLOGS_REDIS"] = redisConfiguration
 	quayConfig.Config["USER_EVENTS_REDIS"] = redisConfiguration
 	quayConfig.Config["SERVER_HOSTNAME"] = quaySetupInstance.quayConfiguration.QuayHostname
+	quayConfig.Config["FEATURE_REPO_MIRROR"] = quaySetupInstance.quayConfiguration.QuayEcosystem.Spec.Quay.EnableRepoMirroring
+	quayConfig.Config["REPO_MIRROR_TLS_VERIFY"] = quaySetupInstance.quayConfiguration.QuayEcosystem.Spec.Quay.RepoMirrorTLSVerify
+
+	if !utils.IsZeroOfUnderlyingType(quaySetupInstance.quayConfiguration.QuayEcosystem.Spec.Quay.RepoMirrorServerHostname) {
+		quayConfig.Config["REPO_MIRROR_SERVER_HOSTNAME"] = quaySetupInstance.quayConfiguration.QuayEcosystem.Spec.Quay.RepoMirrorServerHostname
+	}
 
 	_, _, err = quaySetupInstance.setupClient.UpdateQuayConfiguration(quayConfig)
 
@@ -135,13 +141,11 @@ func (qm *QuaySetupManager) SetupQuay(quaySetupInstance *QuaySetupInstance) erro
 	distributedStoragePreference := []string{}
 	distributedStorageReplicateByDefault := []string{}
 	storageReplication := false
-	truthy := true
 
 	for _, registryBackend := range quaySetupInstance.quayConfiguration.RegistryBackends {
 
 		var quayRegistry []interface{}
-
-		if registryBackend.ReplicateByDefault == &truthy {
+		if registryBackend.ReplicateByDefault != nil && *registryBackend.ReplicateByDefault == true {
 			distributedStorageReplicateByDefault = append(distributedStorageReplicateByDefault, registryBackend.Name)
 			storageReplication = true
 		}
@@ -185,8 +189,18 @@ func (qm *QuaySetupManager) SetupQuay(quaySetupInstance *QuaySetupInstance) erro
 
 	quayConfig.Config["DISTRIBUTED_STORAGE_CONFIG"] = distributedStorageConfig
 	quayConfig.Config["FEATURE_STORAGE_REPLICATION"] = storageReplication
+
+	// Set storage preference if not set
+	if len(quaySetupInstance.quayConfiguration.RegistryBackends) == 1 {
+		distributedStoragePreference = append(distributedStoragePreference, quaySetupInstance.quayConfiguration.RegistryBackends[0].Name)
+	}
+
 	quayConfig.Config["DISTRIBUTED_STORAGE_PREFERENCE"] = distributedStoragePreference
-	quayConfig.Config["DISTRIBUTED_STORAGE_DEFAULT_LOCATIONS"] = distributedStorageReplicateByDefault
+
+	// Set default storage preference locations if defined
+	if len(distributedStorageReplicateByDefault) > 0 {
+		quayConfig.Config["DISTRIBUTED_STORAGE_DEFAULT_LOCATIONS"] = distributedStorageReplicateByDefault
+	}
 
 	// Setup Security Scanner
 	if quaySetupInstance.quayConfiguration.QuayEcosystem.Spec.Clair != nil && quaySetupInstance.quayConfiguration.QuayEcosystem.Spec.Clair.Enabled {

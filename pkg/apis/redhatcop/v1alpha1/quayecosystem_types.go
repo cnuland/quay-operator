@@ -28,6 +28,9 @@ type QuayEcosystemConditionType string
 // QuayConfigFileType defines the type of configuration file
 type QuayConfigFileType string
 
+// ExternalAccessType defines the method for accessing Quay from an external source
+type ExternalAccessType string
+
 const (
 
 	// QuayEcosystemValidationFailure indicates that there was an error validating the configuration
@@ -65,6 +68,18 @@ const (
 
 	// ConfigQuayConfigFileType specifies a Extra Ca Certificate file type
 	ConfigQuayConfigFileType QuayConfigFileType = "config"
+
+	// RouteExternalAccessType specifies external access using a Route
+	RouteExternalAccessType ExternalAccessType = "Route"
+
+	// LoadBalancerExternalAccessType specifies external access using a LoadBalancerr
+	LoadBalancerExternalAccessType ExternalAccessType = "LoadBalancer"
+
+	// IngressExternalAccessType specifies external access using a Ingress
+	IngressExternalAccessType ExternalAccessType = "Ingress"
+
+	// NodePortExternalAccessType specifies external access using a NodePort
+	NodePortExternalAccessType ExternalAccessType = "NodePort"
 )
 
 // QuayEcosystemStatus defines the observed state of QuayEcosystem
@@ -110,12 +125,18 @@ type Quay struct {
 	// +listType=atomic
 	ConfigEnvVars    []corev1.EnvVar             `json:"configEnvVars,omitempty"`
 	ConfigResources  corev1.ResourceRequirements `json:"configResources,omitempty" protobuf:"bytes,2,opt,name=configResources"`
-	ConfigRouteHost  string                      `json:"configRouteHost,omitempty"`
+	ConfigHostname   string                      `json:"configHostname,omitempty"`
 	ConfigSecretName string                      `json:"configSecretName,omitempty"`
-	Database         *Database                   `json:"database,omitempty"`
+	// +listType=atomic
+	RepoMirrorEnvVars        []corev1.EnvVar             `json:"repoMirrorEnvVars,omitempty"`
+	RepoMirrorResources      corev1.ResourceRequirements `json:"repoMirrorResources,omitempty" protobuf:"bytes,2,opt,name=configResources"`
+	RepoMirrorServerHostname string                      `json:"repoMirrorServerHostname,omitempty"`
+	RepoMirrorTLSVerify      bool                        `json:"repoMirrorTLSVerify,omitempty"`
+
+	Database *Database `json:"database,omitempty"`
 	// +kubebuilder:validation:Enum=Recreate;RollingUpdate
-	DeploymentStrategy    appsv1.DeploymentStrategyType `json:"deploymentStrategy,omitempty"`
-	EnableNodePortService bool                          `json:"enableNodePortService,omitempty"`
+	DeploymentStrategy  appsv1.DeploymentStrategyType `json:"deploymentStrategy,omitempty"`
+	EnableRepoMirroring bool                          `json:"enableRepoMirroring,omitempty"`
 	// +listType=atomic
 	EnvVars              []corev1.EnvVar   `json:"envVars,omitempty"`
 	Image                string            `json:"image,omitempty"`
@@ -123,13 +144,15 @@ type Quay struct {
 	LivenessProbe        *corev1.Probe     `json:"livenessProbe,omitempty"`
 	KeepConfigDeployment bool              `json:"keepConfigDeployment,omitempty"`
 	NodeSelector         map[string]string `json:"nodeSelector,omitempty" protobuf:"bytes,7,rep,name=nodeSelector"`
+	NodePort             *int32            `json:"nodePort,omitempty"`
+	ConfigNodePort       *int32            `json:"configNodePort,omitempty"`
 	ReadinessProbe       *corev1.Probe     `json:"readinessProbe,omitempty"`
 	// +listType=atomic
 	RegistryBackends               []RegistryBackend           `json:"registryBackends,omitempty"`
 	RegistryStorage                *RegistryStorage            `json:"registryStorage,omitempty"`
 	Replicas                       *int32                      `json:"replicas,omitempty"`
 	Resources                      corev1.ResourceRequirements `json:"resources,omitempty" protobuf:"bytes,2,opt,name=resources"`
-	RouteHost                      string                      `json:"routeHost,omitempty"`
+	Hostname                       string                      `json:"hostname,omitempty"`
 	SkipSetup                      bool                        `json:"skipSetup,omitempty"`
 	SslCertificatesSecretName      string                      `json:"sslCertificatesSecretName,omitempty"`
 	SuperuserCredentialsSecretName string                      `json:"superuserCredentialsSecretName,omitempty"`
@@ -139,6 +162,9 @@ type Quay struct {
 	// +patchStrategy=merge
 	// +listType=atomic
 	ConfigFiles []QuayConfigFiles `json:"configFiles,omitempty" patchStrategy:"merge" patchMergeKey:"secretName" protobuf:"bytes,2,rep,name=configFiles"`
+
+	// +kubebuilder:validation:Enum=Route;LoadBalancer;Ingress;NodePort
+	ExternalAccessType ExternalAccessType `json:"externalAccessType,omitempty"`
 }
 
 // QuayEcosystemCondition defines a list of conditions that the object will transiton through
@@ -240,7 +266,7 @@ type RegistryBackendSource struct {
 // RegistryStorage defines the configurations to support persistent storage
 // +k8s:openapi-gen=true
 type RegistryStorage struct {
-	// +listType=atomic
+	// +listType=set
 	PersistentVolumeAccessModes      []corev1.PersistentVolumeAccessMode `json:"persistentVolumeAccessModes,omitempty,name=persistentVolumeAccessModes"`
 	PersistentVolumeSize             string                              `json:"persistentVolumeSize,omitempty,name=volumeSize"`
 	PersistentVolumeStorageClassName string                              `json:"persistentVolumeStorageClassName,omitempty,name=storageClassName"`

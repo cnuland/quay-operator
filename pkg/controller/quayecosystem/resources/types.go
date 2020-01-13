@@ -53,6 +53,8 @@ type QuayConfiguration struct {
 	ClairSslCertificate []byte
 	ClairSslPrivateKey  []byte
 	ClairUpdateInterval time.Duration
+
+	IsOpenShift bool
 }
 
 type QuayMigrationPhase int
