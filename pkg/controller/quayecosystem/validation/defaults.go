@@ -83,6 +83,12 @@ func SetDefaults(client client.Client, quayConfiguration *resources.QuayConfigur
 		quayConfiguration.QuayEcosystem.Spec.Quay.ExternalAccessType = redhatcopv1alpha1.RouteExternalAccessType
 	}
 
+	// Quay Migration Phase
+	if utils.IsZeroOfUnderlyingType(quayConfiguration.QuayEcosystem.Spec.Quay.MigrationPhase) {
+		changed = true
+		quayConfiguration.QuayEcosystem.Spec.Quay.MigrationPhase = redhatcopv1alpha1.NewInstallation
+	}
+
 	// Apply default values for Redis
 	if utils.IsZeroOfUnderlyingType(quayConfiguration.QuayEcosystem.Spec.Redis.Hostname) {
 
