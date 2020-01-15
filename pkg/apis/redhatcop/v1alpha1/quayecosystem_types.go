@@ -165,6 +165,7 @@ type Quay struct {
 
 	// +kubebuilder:validation:Enum=Route;LoadBalancer;Ingress;NodePort
 	ExternalAccessType ExternalAccessType `json:"externalAccessType,omitempty"`
+	MigrationPhase     QuayMigrationPhase `json:"MigrationPhase,omitempty"`
 }
 
 // QuayEcosystemCondition defines a list of conditions that the object will transiton through
@@ -367,6 +368,19 @@ type QuayConfigFiles struct {
 	// +listType=atomic
 	Files []QuayConfigFile   `json:"files,omitempty,name=files"`
 	Type  QuayConfigFileType `json:"type,omitempty,name=type"`
+}
+
+type QuayMigrationPhase int
+
+var (
+	NewInstallation         QuayMigrationPhase
+	AddNewFields            QuayMigrationPhase
+	BackfillThenReadOnlyNew QuayMigrationPhase
+	RemoveOldField          QuayMigrationPhase
+)
+
+func (q QuayMigrationPhase) String() string {
+	return [...]string{"new-installation", "add-new-fields", "backfill-then-read-only-new", "remove-old-field"}[q]
 }
 
 // QuayConfigFile defines configuration files that are injected into the Quay resources
