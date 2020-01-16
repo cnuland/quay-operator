@@ -5,3 +5,4 @@ metadata:
 spec:
   quay:
     imagePullSecretName: redhat-pull-secret
+    migrationPhase: new-installation

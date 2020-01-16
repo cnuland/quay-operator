@@ -6,3 +6,4 @@ spec:
   quay:
     superuserCredentialsSecretName: <secret_name>
     imagePullSecretName: redhat-pull-secret
+    migrationPhase: new-installation

@@ -30,6 +30,7 @@ spec:
     envVars:
       - name: DEBUGLOG
         value: "true"
+    migrationPhase: new-installation
   redis:
     credentialsSecretName: quay-redis-password
     imagePullSecretName: redhat-pull-secret
