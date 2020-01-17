@@ -165,7 +165,8 @@ type Quay struct {
 
 	// +kubebuilder:validation:Enum=Route;LoadBalancer;Ingress;NodePort
 	ExternalAccessType ExternalAccessType `json:"externalAccessType,omitempty"`
-	MigrationPhase     QuayMigrationPhase `json:"migrationPhase" protobuf:"bytes,1,opt,name=migrationPhase,casttype=QuayMigrationPhase"`
+	// +kubebuilder:validation:Enum=new-installation;add-new-fields;backfill-then-read-only-new;remove-old-field
+	MigrationPhase QuayMigrationPhase `json:"migrationPhase,omitempty" protobuf:"bytes,1,opt,name=migrationPhase,casttype=QuayMigrationPhase"`
 }
 
 // QuayEcosystemCondition defines a list of conditions that the object will transiton through

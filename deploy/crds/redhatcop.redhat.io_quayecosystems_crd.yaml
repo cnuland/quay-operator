@@ -1573,6 +1573,11 @@ spec:
                       type: integer
                   type: object
                 migrationPhase:
+                  enum:
+                  - new-installation
+                  - add-new-fields
+                  - backfill-then-read-only-new
+                  - remove-old-field
                   type: string
                 nodePort:
                   format: int32
@@ -2009,8 +2014,6 @@ spec:
                   type: string
                 superuserCredentialsSecretName:
                   type: string
-              required:
-              - migrationPhase
               type: object
             redis:
               description: Redis defines the properies of a deployment of Redis
